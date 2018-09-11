@@ -20,82 +20,91 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
-  protected final int maxEvaluations;
+    protected final int maxEvaluations;
 
-  protected final SolutionListEvaluator<S> evaluator;
+    protected final SolutionListEvaluator<S> evaluator;
 
-  protected int evaluations;
-  protected Comparator<S> dominanceComparator ;
+    protected int evaluations;
+    protected Comparator<S> dominanceComparator;
 
-  /**
-   * Constructor
-   */
-  public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
-      CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator) {
-    this(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator, selectionOperator,
-        new DominanceComparator<S>(), evaluator);
-  }
-  /**
-   * Constructor
-   */
-  public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
-      CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator, Comparator<S> dominanceComparator, SolutionListEvaluator<S> evaluator) {
-    super(problem);
-    this.maxEvaluations = maxEvaluations;
-    setMaxPopulationSize(populationSize); ;
+    /**
+     * Constructor
+     */
+    public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
+                  CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
+                  SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator) {
+        this(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator, selectionOperator,
+                new DominanceComparator<S>(), evaluator);
+    }
 
-    this.crossoverOperator = crossoverOperator;
-    this.mutationOperator = mutationOperator;
-    this.selectionOperator = selectionOperator;
+    /**
+     * Constructor
+     */
+    public NSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
+                  CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
+                  SelectionOperator<List<S>, S> selectionOperator, Comparator<S> dominanceComparator, SolutionListEvaluator<S> evaluator) {
+        super(problem);
+        this.maxEvaluations = maxEvaluations;
+        setMaxPopulationSize(populationSize);
 
-    this.evaluator = evaluator;
-    this.dominanceComparator = dominanceComparator ;
-  }
+        this.crossoverOperator = crossoverOperator;
+        this.mutationOperator = mutationOperator;
+        this.selectionOperator = selectionOperator;
 
-  @Override protected void initProgress() {
-    evaluations = getMaxPopulationSize();
-  }
+        this.evaluator = evaluator;
+        this.dominanceComparator = dominanceComparator;
+    }
 
-  @Override protected void updateProgress() {
-    evaluations += getMaxPopulationSize() ;
-  }
+    @Override
+    protected void initProgress() {
+        evaluations = getMaxPopulationSize();
+    }
 
-  @Override protected boolean isStoppingConditionReached() {
-    return evaluations >= maxEvaluations;
-  }
+    @Override
+    protected void updateProgress() {
+        evaluations += getMaxPopulationSize();
+    }
 
-  @Override protected List<S> evaluatePopulation(List<S> population) {
-    population = evaluator.evaluate(population, getProblem());
+    @Override
+    protected boolean isStoppingConditionReached() {
+        return evaluations >= maxEvaluations;
+    }
 
-    return population;
-  }
+    @Override
+    protected List<S> evaluatePopulation(List<S> population) {
+        population = evaluator.evaluate(population, getProblem());
 
-  @Override protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-    List<S> jointPopulation = new ArrayList<>();
-    jointPopulation.addAll(population);
-    jointPopulation.addAll(offspringPopulation);
+        return population;
+    }
 
-    RankingAndCrowdingSelection<S> rankingAndCrowdingSelection ;
-    rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(getMaxPopulationSize(), dominanceComparator) ;
+    @Override
+    protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+        List<S> jointPopulation = new ArrayList<>();
+        jointPopulation.addAll(population);
+        jointPopulation.addAll(offspringPopulation);
 
-    return rankingAndCrowdingSelection.execute(jointPopulation) ;
-  }
+        RankingAndCrowdingSelection<S> rankingAndCrowdingSelection;
+        rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(getMaxPopulationSize(), dominanceComparator);
 
-  @Override public List<S> getResult() {
-    return getNonDominatedSolutions(getPopulation());
-  }
+        return rankingAndCrowdingSelection.execute(jointPopulation);
+    }
 
-  protected List<S> getNonDominatedSolutions(List<S> solutionList) {
-    return SolutionListUtils.getNondominatedSolutions(solutionList);
-  }
+    @Override
+    public List<S> getResult() {
+        return getNonDominatedSolutions(getPopulation());
+    }
 
-  @Override public String getName() {
-    return "NSGAII" ;
-  }
+    protected List<S> getNonDominatedSolutions(List<S> solutionList) {
+        return SolutionListUtils.getNondominatedSolutions(solutionList);
+    }
 
-  @Override public String getDescription() {
-    return "Nondominated Sorting Genetic Algorithm version II" ;
-  }
+    @Override
+    public String getName() {
+        return "NSGAII";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Nondominated Sorting Genetic Algorithm version II";
+    }
 }

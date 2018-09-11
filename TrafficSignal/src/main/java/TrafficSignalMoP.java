@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrafficSignalOptimizer extends AbstractDoubleProblem {
+public class TrafficSignalMoP extends AbstractDoubleProblem {
     private double trafficJam[] = {3, 6, 1, 7};
 
     /**
@@ -16,9 +16,9 @@ public class TrafficSignalOptimizer extends AbstractDoubleProblem {
      * @param minJamTime    Minimum time of traffic jam
      * @param maxJamTime    Maximum time of traffic jam
      */
-    public TrafficSignalOptimizer(int numberOfLinks, double minJamTime, double maxJamTime) {
+    public TrafficSignalMoP(int numberOfLinks, double minJamTime, double maxJamTime) {
         setNumberOfVariables(numberOfLinks);
-        setNumberOfObjectives(1);
+        setNumberOfObjectives(2);
         setName("TrafficSignal");
 
         List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
@@ -42,21 +42,27 @@ public class TrafficSignalOptimizer extends AbstractDoubleProblem {
 
     @Override
     public void evaluate(DoubleSolution solution) {
+        double[] f = new double[getNumberOfObjectives()];
+
         int numberOfVariables = getNumberOfVariables();
 
         double[] x = new double[numberOfVariables];
-
         for (int i = 0; i < numberOfVariables; i++) {
             x[i] = solution.getVariableValue(i);
         }
 
-        double sum = 0.0;
+        double sumJam = 0.0;
         for (int var = 0; var < numberOfVariables; var++) {
             double value = x[var];
-            sum += Math.abs(trafficJam[var] - value / 60);
+            sumJam += Math.abs(trafficJam[var] - value / 60);
         }
 
-        solution.setObjective(0, sum);
+        double sumTime = 0;
+
+        f[0] = sumJam;
+        f[1] = sumTime;
+        solution.setObjective(0, f[0]);
+        solution.setObjective(1, f[1]);
     }
 
     public double[] finalState(double[] best) {
