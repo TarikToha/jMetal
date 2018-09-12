@@ -13,6 +13,8 @@ import org.uma.jmetal.util.AbstractAlgorithmRunner;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+import org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +33,7 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
     private SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
     private AlgorithmRunner algorithmRunner;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 //        new TrafficSignalRunner().optimizerGA();
         new TrafficSignalRunner().optimizerNSGAII();
     }
@@ -42,11 +44,13 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
         crossover = new SBXCrossover(0.9, 20.0);
         mutation = new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20);
         selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
+        SolutionListEvaluator<DoubleSolution> evaluator = new MultithreadedSolutionListEvaluator<>(4, problem);
 
         Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation)
                 .setSelectionOperator(selection)
+                .setSolutionListEvaluator(evaluator)
                 .setPopulationSize(100)
-                .setMaxEvaluations(1000)
+                .setMaxEvaluations(10000)
                 .build();
 
         algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
