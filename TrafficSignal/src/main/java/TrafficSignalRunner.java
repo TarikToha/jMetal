@@ -33,11 +33,11 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
 
     public static void main(String[] args) throws Exception {
 //        new TrafficSignalRunner().optimizerGA();
-        new TrafficSignalRunner().optimizerMoP();
+        new TrafficSignalRunner().optimizerNSGAII();
     }
 
-    private void optimizerMoP() throws Exception {
-        problem = new TrafficSignalMoP(4, 0, 180);
+    private void optimizerNSGAII() {
+        problem = new TrafficSignalNSGAII(4, 0, 180);
 
         crossover = new SBXCrossover(0.9, 20.0);
         mutation = new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20);
@@ -58,7 +58,6 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
         JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
         printFinalSolutionSet(population);
-        printQualityIndicators(population, "TrafficSignal.txt");
     }
 
     private void optimizerGA() {

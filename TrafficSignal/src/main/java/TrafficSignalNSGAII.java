@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrafficSignalMoP extends AbstractDoubleProblem {
+public class TrafficSignalNSGAII extends AbstractDoubleProblem {
     private double trafficJam[] = {3, 6, 1, 7};
 
     /**
@@ -16,7 +16,7 @@ public class TrafficSignalMoP extends AbstractDoubleProblem {
      * @param minJamTime    Minimum time of traffic jam
      * @param maxJamTime    Maximum time of traffic jam
      */
-    public TrafficSignalMoP(int numberOfLinks, double minJamTime, double maxJamTime) {
+    public TrafficSignalNSGAII(int numberOfLinks, double minJamTime, double maxJamTime) {
         setNumberOfVariables(numberOfLinks);
         setNumberOfObjectives(2);
         setName("TrafficSignal");
@@ -42,27 +42,31 @@ public class TrafficSignalMoP extends AbstractDoubleProblem {
 
     @Override
     public void evaluate(DoubleSolution solution) {
-        double[] f = new double[getNumberOfObjectives()];
+        double[] objectives = new double[getNumberOfObjectives()];
 
         int numberOfVariables = getNumberOfVariables();
-
-        double[] x = new double[numberOfVariables];
-        for (int i = 0; i < numberOfVariables; i++) {
-            x[i] = solution.getVariableValue(i);
-        }
-
-        double sumJam = 0.0;
+        double[] candidate = new double[numberOfVariables];
         for (int var = 0; var < numberOfVariables; var++) {
-            double value = x[var];
-            sumJam += Math.abs(trafficJam[var] - value / 60);
+            candidate[var] = solution.getVariableValue(var);
         }
 
-        double sumTime = 0;
+        double sumJam = 0.0, sumTime = 0.0;
+        double[] updatedJam = new double[trafficJam.length];
+        for (int var = 0; var < numberOfVariables; var++) {
+            updatedJam[var] = Math.abs(trafficJam[var] - candidate[var] / 10);
+            sumJam += updatedJam[var];
 
-        f[0] = sumJam;
-        f[1] = sumTime;
-        solution.setObjective(0, f[0]);
-        solution.setObjective(1, f[1]);
+            for (int i = 0; i < numberOfVariables; i++) {
+                if (i != var) {
+                    sumTime += updatedJam[i] * candidate[i];
+                }
+            }
+        }
+
+        objectives[0] = sumJam;
+        objectives[1] = sumTime;
+        solution.setObjective(0, objectives[0]);
+        solution.setObjective(1, objectives[1]);
     }
 
     public double[] finalState(double[] best) {
