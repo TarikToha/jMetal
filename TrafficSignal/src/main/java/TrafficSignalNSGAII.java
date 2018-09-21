@@ -7,6 +7,7 @@ import java.util.List;
 
 public class TrafficSignalNSGAII extends AbstractDoubleProblem {
     private double trafficJam[] = {3, 6, 1, 7};
+    private double speed = 10;
 
     /**
      * Constructor Creates a default instance of the traffic signal optimization
@@ -50,15 +51,17 @@ public class TrafficSignalNSGAII extends AbstractDoubleProblem {
             candidate[var] = solution.getVariableValue(var);
         }
 
+        double[] updatedJam = new double[numberOfVariables];
+        System.arraycopy(trafficJam, 0, updatedJam, 0, numberOfVariables);
+
         double sumJam = 0.0, sumTime = 0.0;
-        double[] updatedJam = new double[trafficJam.length];
         for (int var = 0; var < numberOfVariables; var++) {
-            updatedJam[var] = Math.abs(trafficJam[var] - candidate[var] / 10);
+            updatedJam[var] = Math.abs(trafficJam[var] - candidate[var] / speed);
             sumJam += updatedJam[var];
 
             for (int i = 0; i < numberOfVariables; i++) {
                 if (i != var) {
-                    sumTime += updatedJam[i] * candidate[i];
+                    sumTime += seriesSum(updatedJam[i]) / updatedJam[i] * speed + candidate[var];
                 }
             }
         }
@@ -69,10 +72,12 @@ public class TrafficSignalNSGAII extends AbstractDoubleProblem {
         solution.setObjective(1, objectives[1]);
     }
 
-    public double[] finalState(double[] best) {
-        for (int i = 0; i < best.length; i++) {
-            trafficJam[i] -= best[i] / 60;
+    private double seriesSum(double max) {
+        double sum = 0;
+        max = Math.round(max);
+        for (int i = 1; i <= max; i++) {
+            sum += i;
         }
-        return trafficJam;
+        return sum;
     }
 }
