@@ -41,7 +41,7 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
     private void optimizerNSGAII() {
         problem = new TrafficSignalNSGAII(4, 0, 180);
 
-        crossover = new SBXCrossover(1.0 / problem.getNumberOfVariables(), 20);
+        crossover = new SBXCrossover(0.9, 20.0);
         mutation = new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20);
         selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
         SolutionListEvaluator<DoubleSolution> evaluator = new MultithreadedSolutionListEvaluator<>(4, problem);
