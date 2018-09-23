@@ -1,54 +1,37 @@
-import org.uma.jmetal.problem.impl.AbstractIntegerProblem;
-import org.uma.jmetal.solution.IntegerSolution;
+import org.uma.jmetal.problem.impl.AbstractBinaryProblem;
+import org.uma.jmetal.solution.BinarySolution;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.BitSet;
 
-public class TrafficSignalNSGAII extends AbstractIntegerProblem {
+public class TrafficSignalNSGAIIBinary extends AbstractBinaryProblem {
     private final double trafficJam[] = {3, 6, 1, 7};
+    private final int bits, dmin;
+    private final double factor;
     private final double speed = 10;
 
-    /**
-     * Constructor Creates a default instance of the traffic signal optimization
-     * problem
-     *
-     * @param numberOfLinks Number of links of the junction
-     * @param minJamTime    Minimum time of traffic jam
-     * @param maxJamTime    Maximum time of traffic jam
-     */
-    public TrafficSignalNSGAII(int numberOfLinks, int minJamTime, int maxJamTime) {
-        setNumberOfVariables(numberOfLinks);
+    public TrafficSignalNSGAIIBinary(Integer numberOfBits, int minDomain, int maxDomain) {
+        setNumberOfVariables(4);
         setNumberOfObjectives(2);
         setName("TrafficSignal");
 
-        List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables());
-        List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables());
-
-        for (int i = 0; i < getNumberOfVariables(); i++) {
-            lowerLimit.add(minJamTime);
-            upperLimit.add(maxJamTime);
-        }
-
-        setLowerLimit(lowerLimit);
-        setUpperLimit(upperLimit);
-
-
-        double sum = 0;
-        for (double aTrafficJam : trafficJam) {
-            sum += aTrafficJam;
-        }
-        System.out.println(Arrays.toString(trafficJam) + "; " + sum);
+        bits = numberOfBits;
+        dmin = minDomain;
+        factor = (maxDomain - dmin) / (Math.pow(2, bits) - 1);
     }
 
     @Override
-    public void evaluate(IntegerSolution solution) {
+    protected int getBitsPerVariable(int index) {
+        return bits;
+    }
+
+    @Override
+    public void evaluate(BinarySolution solution) {
         double[] objectives = new double[getNumberOfObjectives()];
 
         int numberOfVariables = getNumberOfVariables();
         int[] candidate = new int[numberOfVariables];
         for (int var = 0; var < numberOfVariables; var++) {
-            candidate[var] = solution.getVariableValue(var);
+            candidate[var] = (int) Math.round(dmin + bitSetToInt(solution.getVariableValue(var)) * factor);
         }
 
         double[] updatedJam = new double[numberOfVariables];
@@ -70,6 +53,16 @@ public class TrafficSignalNSGAII extends AbstractIntegerProblem {
         objectives[1] = sumTime;
         solution.setObjective(0, objectives[0]);
         solution.setObjective(1, objectives[1]);
+    }
+
+    private int bitSetToInt(BitSet bitSet) {
+        int bitInteger = 0;
+        for (int i = 0; i < bits; i++) {
+            if (bitSet.get(i)) {
+                bitInteger |= (1 << i);
+            }
+        }
+        return bitInteger;
     }
 
     private double seriesSum(double max) {
