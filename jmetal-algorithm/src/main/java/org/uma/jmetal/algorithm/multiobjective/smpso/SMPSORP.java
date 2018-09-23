@@ -36,11 +36,8 @@ import java.util.List;
 
 /**
  * This class implements the SMPSORP algorithm described in:
- * "Extending the Speed-constrained Multi-Objective PSO (SMPSO) With Reference Point Based Preference
- * Articulation. Antonio J. Nebro, Juan J. Durillo, José García-Nieto, Cristóbal Barba-González,
- * Javier Del Ser, Carlos A. Coello Coello, Antonio Benítez-Hidalgo, José F. Aldana-Montes.
- * Parallel Problem Solving from Nature -- PPSN XV. Lecture Notes In Computer Science, Vol. 11101,
- * pp. 298-310. 2018".
+ * Extending the Speed-constrained Multi-Objective PSO (SMPSO) With Reference Point Based Preference Articulation
+ * Accepted in PPSN 2018
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
@@ -358,7 +355,7 @@ public class SMPSORP
   }
 
   @Override public String getName() {
-    return "SMPSO/RP" ;
+    return "SMPSO" ;
   }
 
   @Override public String getDescription() {

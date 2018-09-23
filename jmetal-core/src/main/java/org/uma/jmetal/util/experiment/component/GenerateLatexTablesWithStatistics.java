@@ -68,13 +68,13 @@ public class GenerateLatexTablesWithStatistics implements ExperimentComponent {
           // Read values from data files
           FileInputStream fis = new FileInputStream(directory);
           InputStreamReader isr = new InputStreamReader(fis);
-          try(BufferedReader br = new BufferedReader(isr)){
+          BufferedReader br = new BufferedReader(isr);
           String aux = br.readLine();
           while (aux != null) {
             data.get(indicator).get(problem).get(algorithm).add(Double.parseDouble(aux));
             aux = br.readLine();
           }
-          }
+          br.close();
         }
       }
     }
@@ -173,7 +173,7 @@ public class GenerateLatexTablesWithStatistics implements ExperimentComponent {
   }
 
   void printHeaderLatexCommands(String fileName) throws IOException {
-    try(FileWriter os = new FileWriter(fileName, false)){
+    FileWriter os = new FileWriter(fileName, false);
     os.write("\\documentclass{article}" + "\n");
     os.write("\\title{" + experiment.getExperimentName() + "}" + "\n");
     os.write("\\usepackage{colortbl}" + "\n");
@@ -184,18 +184,19 @@ public class GenerateLatexTablesWithStatistics implements ExperimentComponent {
     os.write("\\begin{document}" + "\n");
     os.write("\\maketitle" + "\n");
     os.write("\\section{Tables}" + "\n");
-    }
+
+    os.close();
   }
 
   void printEndLatexCommands(String fileName) throws IOException {
-    try(FileWriter os = new FileWriter(fileName, true)){
+    FileWriter os = new FileWriter(fileName, true);
     os.write("\\end{document}" + "\n");
-    }
+    os.close();
   }
 
   private void printData(String latexFile, int indicatorIndex, double[][][] centralTendency, double[][][] dispersion, String caption) throws IOException {
     // Generate header of the table
-    try(FileWriter os = new FileWriter(latexFile, true)){
+    FileWriter os = new FileWriter(latexFile, true);
     os.write("\n");
     os.write("\\begin{table}" + "\n");
     os.write("\\caption{" + experiment.getIndicatorList().get(indicatorIndex).getName() + ". " + caption + "}" + "\n");
@@ -310,7 +311,7 @@ public class GenerateLatexTablesWithStatistics implements ExperimentComponent {
     os.write("\\end{tabular}" + "\n");
     os.write("\\end{scriptsize}" + "\n");
     os.write("\\end{table}" + "\n");
-    }
+    os.close();
   }
 
 }

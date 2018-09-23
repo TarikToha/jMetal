@@ -17,9 +17,7 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class FrontUtils {
-	
 
-<<<<<<< HEAD
     /**
      * Gets the maximum values for each objectives in a front
      *
@@ -32,22 +30,6 @@ public class FrontUtils {
         } else if (front.getNumberOfPoints() == 0) {
             throw new JMetalException("The front is empty");
         }
-=======
-  /**
-   * Gets the maximum values for each objectives in a front
-   *
-   * @param front A front of objective values
-   * @return double [] An array with the maximum values for each objective
-   */
-  public static double[] getMaximumValues(Front front) {
-    if (front == null) {
-      throw new NullFrontException() ;
-    } else if (front.getNumberOfPoints() == 0) {
-      throw new EmptyFrontException() ;
-    }
-
-    int numberOfObjectives = front.getPoint(0).getDimension() ;
->>>>>>> upstream/master
 
         int numberOfObjectives = front.getPoint(0).getDimension();
 
@@ -64,21 +46,7 @@ public class FrontUtils {
             }
         }
 
-<<<<<<< HEAD
         return maximumValue;
-=======
-  /**
-   * Gets the minimum values for each objectives in a given front
-   *
-   * @param front The front
-   * @return double [] An array with the minimum value for each objective
-   */
-  public static double[] getMinimumValues(Front front) {
-    if (front == null) {
-      throw new NullFrontException() ;
-    } else if (front.getNumberOfPoints() == 0) {
-      throw new EmptyFrontException() ;
->>>>>>> upstream/master
     }
 
     /**
@@ -112,7 +80,6 @@ public class FrontUtils {
         return minimumValue;
     }
 
-<<<<<<< HEAD
     /**
      * Gets the distance between a point and the nearest one in a front. If a distance equals to 0
      * is found, that means that the point is in the front, so it is excluded
@@ -123,23 +90,6 @@ public class FrontUtils {
      */
     public static double distanceToNearestPoint(Point point, Front front) {
         return distanceToNearestPoint(point, front, new EuclideanDistance());
-=======
-  /**
-   * Gets the distance between a point and the nearest one in a front. If a distance equals to 0
-   * is found, that means that the point is in the front, so it is excluded
-   *
-   * @param point The point
-   * @param front The front that contains the other points to calculate the distances
-   * @return The minimum distance between the point and the front
-   */
-  public static double distanceToNearestPoint(Point point, Front front, PointDistance distance) {
-    if (front == null) {
-      throw new NullFrontException();
-    } else if (front.getNumberOfPoints() == 0) {
-      throw new EmptyFrontException();
-    } else if (point == null) {
-      throw new JMetalException("The point is null");
->>>>>>> upstream/master
     }
 
     /**
@@ -171,7 +121,6 @@ public class FrontUtils {
         return minDistance;
     }
 
-<<<<<<< HEAD
     /**
      * Gets the distance between a point and the nearest one in a given front. The Euclidean distance
      * is assumed
@@ -183,23 +132,6 @@ public class FrontUtils {
      */
     public static double distanceToClosestPoint(Point point, Front front) {
         return distanceToClosestPoint(point, front, new EuclideanDistance());
-=======
-  /**
-   * Gets the distance between a point and the nearest one in a given front
-   *
-   * @param point The point
-   * @param front The front that contains the other points to calculate the
-   *              distances
-   * @return The minimum distance between the point and the front
-   */
-  public static double distanceToClosestPoint(Point point, Front front, PointDistance distance) {
-    if (front == null) {
-      throw new NullFrontException();
-    } else if (front.getNumberOfPoints() == 0) {
-      throw new EmptyFrontException();
-    } else if (point == null) {
-      throw new JMetalException("The point is null");
->>>>>>> upstream/master
     }
 
     /**
@@ -228,22 +160,7 @@ public class FrontUtils {
             }
         }
 
-<<<<<<< HEAD
         return minDistance;
-=======
-  /**
-   * This method receives a normalized pareto front and return the inverted one.
-   * This method is for minimization problems
-   *
-   * @param front The pareto front to inverse
-   * @return The inverted pareto front
-   */
-  public static Front getInvertedFront(Front front) {
-    if (front == null) {
-      throw new NullFrontException();
-    } else if (front.getNumberOfPoints() == 0) {
-      throw new EmptyFrontException();
->>>>>>> upstream/master
     }
 
     /**
@@ -278,7 +195,6 @@ public class FrontUtils {
         return invertedFront;
     }
 
-<<<<<<< HEAD
     /**
      * Given a front, converts it to an array of double values
      *
@@ -289,18 +205,6 @@ public class FrontUtils {
         if (front == null) {
             throw new JMetalException("The front is null");
         }
-=======
-  /**
-   * Given a front, converts it to an array of double values
-   *
-   * @param front
-   * @return A front as double[][] array
-   */
-  public static double[][] convertFrontToArray(Front front) {
-    if (front == null) {
-      throw new NullFrontException();
-    }
->>>>>>> upstream/master
 
         double[][] arrayFront = new double[front.getNumberOfPoints()][];
 
@@ -348,19 +252,12 @@ public class FrontUtils {
   }
 */
 
-<<<<<<< HEAD
     /**
      * Given a front, converts it to a Solution set of PointSolutions
      *
      * @param front
      * @return A front as a List<FrontSolution>
      */
-=======
-  public static List<PointSolution> convertFrontToSolutionList(Front front) {
-    if (front == null) {
-      throw new NullFrontException();
-    }
->>>>>>> upstream/master
 
     public static List<PointSolution> convertFrontToSolutionList(Front front) {
         if (front == null) {
@@ -382,28 +279,9 @@ public class FrontUtils {
                 solution.setObjective(j, front.getPoint(i).getValue(j));
             }
 
-<<<<<<< HEAD
             solutionSet.add(solution);
         }
 
         return solutionSet;
     }
-=======
-    return solutionSet ;
-  }
-  
-  @SuppressWarnings("serial")
-  private static class NullFrontException extends JMetalException {
-    public NullFrontException() {
-      super("The front is null");
-    }
-  }
-  
-  @SuppressWarnings("serial")
-  private static class EmptyFrontException extends JMetalException {
-    public EmptyFrontException() {
-      super("The front is empty");
-    }
-  }
->>>>>>> upstream/master
 }

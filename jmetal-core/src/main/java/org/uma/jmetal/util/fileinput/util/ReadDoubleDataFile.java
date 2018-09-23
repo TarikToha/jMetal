@@ -21,11 +21,11 @@ public class ReadDoubleDataFile {
       inputStream = new FileInputStream(fileName);
     }
     InputStreamReader isr = new InputStreamReader(inputStream);
-    
+    BufferedReader br = new BufferedReader(isr);
 
     List<Double> list = new ArrayList<>();
     String line ;
-    try(BufferedReader br = new BufferedReader(isr)) {
+    try {
       line = br.readLine();
 
       while (line != null) {
@@ -36,7 +36,7 @@ public class ReadDoubleDataFile {
         }
         line = br.readLine();
       }
-      
+      br.close();
     } catch (IOException e) {
       throw new JMetalException("Error reading file", e);
     } catch (NumberFormatException e) {

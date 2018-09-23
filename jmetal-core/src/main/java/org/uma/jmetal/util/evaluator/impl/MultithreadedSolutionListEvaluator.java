@@ -46,32 +46,5 @@ public class MultithreadedSolutionListEvaluator<S> implements SolutionListEvalua
     @Override
     public void shutdown() {
     }
-<<<<<<< HEAD
-=======
-    JMetalLogger.logger.info("Number of cores: " + numberOfThreads);
-  }
-
-  @Override
-  public List<S> evaluate(List<S> solutionList, Problem<S> problem) {
-      if (problem instanceof ConstrainedProblem) {
-        solutionList.parallelStream().forEach(s -> {
-          problem.evaluate(s);
-          ((ConstrainedProblem<S>) problem).evaluateConstraints(s);
-        });
-      } else {
-        solutionList.parallelStream().forEach(s -> problem.evaluate(s));
-      }
-
-    return solutionList;
-  }
-
-  public int getNumberOfThreads() {
-  	return numberOfThreads ;
-  }
-  
-  @Override public void shutdown() {
-	  //This method is an intentionally-blank override.
-  }
->>>>>>> upstream/master
 
 }

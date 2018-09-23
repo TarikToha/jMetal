@@ -15,22 +15,10 @@ import java.util.*;
  * Modified by Juanjo 13/03/15
  */
 public class SolutionListUtils {
-<<<<<<< HEAD
 
     public static <S extends Solution<?>> List<S> getNondominatedSolutions(List<S> solutionList) {
         Ranking<S> ranking = new DominanceRanking<S>();
         return ranking.computeRanking(solutionList).getSubfront(0);
-=======
-	
-  public static <S extends Solution<?>> List<S> getNondominatedSolutions(List<S> solutionList) {
-    Ranking<S> ranking = new DominanceRanking<S>() ;
-    return ranking.computeRanking(solutionList).getSubfront(0);
-  }
-
-  public <S> S findWorstSolution(Collection<S> solutionList, Comparator<S> comparator) {
-    if ((solutionList == null) || (solutionList.isEmpty())) {
-      throw new IllegalArgumentException("No solution provided: "+solutionList);
->>>>>>> upstream/master
     }
 
     /**
@@ -49,7 +37,6 @@ public class SolutionListUtils {
             throw new JMetalException("The comparator is null");
         }
 
-<<<<<<< HEAD
         int index = 0;
         S bestKnown = solutionList.get(0);
         S candidateSolution;
@@ -63,30 +50,10 @@ public class SolutionListUtils {
                 bestKnown = candidateSolution;
             }
         }
-=======
-    return worstKnown;
-  }
-  
-  /**
-   * Finds the index of the best solution in the list according to a comparator
-   * @param solutionList
-   * @param comparator
-   * @return The index of the best solution
-   */
-  public static <S> int findIndexOfBestSolution(List<S> solutionList, Comparator<S> comparator) {
-    if (solutionList == null) {
-      throw new NullSolutionListException() ;
-    } else if (solutionList.isEmpty()) {
-      throw new EmptySolutionListException() ;
-    } else if (comparator == null) {
-      throw new JMetalException("The comparator is null") ;
-    }
->>>>>>> upstream/master
 
         return index;
     }
 
-<<<<<<< HEAD
     /**
      * Finds the index of the worst solution in the list according to a comparator
      *
@@ -118,24 +85,6 @@ public class SolutionListUtils {
         }
 
         return index;
-=======
-    return index;
-  }
-
-  /**
-   * Finds the index of the worst solution in the list according to a comparator
-   * @param solutionList
-   * @param comparator
-   * @return The index of the best solution
-   */
-  public static <S> int findIndexOfWorstSolution(List<? extends S> solutionList, Comparator<S> comparator) {
-    if (solutionList == null) {
-      throw new NullSolutionListException() ;
-    } else if (solutionList.isEmpty()) {
-      throw new EmptySolutionListException() ;
-    } else if (comparator == null) {
-      throw new JMetalException("The comparator is null") ;
->>>>>>> upstream/master
     }
 
     public static <S> S findBestSolution(List<S> solutionList, Comparator<S> comparator) {
@@ -231,7 +180,6 @@ public class SolutionListUtils {
         return result;
     }
 
-<<<<<<< HEAD
     /**
      * This method receives a normalized list of non-dominated solutions and return the inverted one.
      * This operation is needed for minimization problem
@@ -243,41 +191,6 @@ public class SolutionListUtils {
             int numberOfSolutionsToBeReturned, List<S> solutionList) {
         JMetalRandom random = JMetalRandom.getInstance();
         return selectNRandomDifferentSolutions(numberOfSolutionsToBeReturned, solutionList, (low, up) -> random.nextInt(low, up));
-=======
-    return result ;
-  }
-
-  /**
-   * This method receives a normalized list of non-dominated solutions and return the inverted one.
-   * This operation is needed for minimization problem
-   *
-   * @param solutionList The front to invert
-   * @return The inverted front
-   */
-  public static <S> List<S> selectNRandomDifferentSolutions(
-      int numberOfSolutionsToBeReturned, List<S> solutionList) {
-	  JMetalRandom random = JMetalRandom.getInstance();
-	  return selectNRandomDifferentSolutions(numberOfSolutionsToBeReturned, solutionList, (low, up) -> random.nextInt(low, up));
-  }
-  
-  /**
-   * This method receives a normalized list of non-dominated solutions and return the inverted one.
-   * This operation is needed for minimization problem
-   *
-   * @param solutionList The front to invert
-   * @param randomGenerator The random generator to use
-   * @return The inverted front
-   */
-  public static <S> List<S> selectNRandomDifferentSolutions(
-      int numberOfSolutionsToBeReturned, List<S> solutionList, BoundedRandomGenerator<Integer> randomGenerator) {
-    if (null == solutionList) {
-      throw new NullSolutionListException() ;
-    } else if (solutionList.size() == 0) {
-      throw new EmptySolutionListException() ;
-    } else if (solutionList.size() < numberOfSolutionsToBeReturned) {
-      throw new JMetalException("The solution list size (" + solutionList.size() +") is less than "
-          + "the number of requested solutions ("+numberOfSolutionsToBeReturned+")") ;
->>>>>>> upstream/master
     }
 
     /**
@@ -335,7 +248,6 @@ public class SolutionListUtils {
         }
         return distance;
     }
-<<<<<<< HEAD
 
     /**
      * Compares two solution lists to determine if both are equals
@@ -362,26 +274,6 @@ public class SolutionListUtils {
             }
         }
         return true;
-=======
-    return true;
-  }
-
-  /**
-   * This methods takes a list of solutions, removes a percentage of its solutions, and it is filled
-   * with new random generated solutions
-   * @param solutionList
-   * @param problem
-   * @param percentageOfSolutionsToRemove
-   */
-  public static <S> void restart(List<S> solutionList, Problem<S> problem,
-                                                     int percentageOfSolutionsToRemove) {
-    if (solutionList == null) {
-      throw new NullSolutionListException() ;
-    } else if (problem == null) {
-      throw new JMetalException("The problem is null") ;
-    } else if ((percentageOfSolutionsToRemove < 0) || (percentageOfSolutionsToRemove > 100)) {
-      throw new JMetalException("The percentage of solutions to remove is invalid: " + percentageOfSolutionsToRemove) ;
->>>>>>> upstream/master
     }
 
     /**
@@ -475,23 +367,4 @@ public class SolutionListUtils {
 
         return worstKnown;
     }
-<<<<<<< HEAD
-=======
-    return result;
-  }
-  
-  @SuppressWarnings("serial")
-  private static class NullSolutionListException extends JMetalException {
-    public NullSolutionListException() {
-      super("The solution list is null");
-    }
-  }
-  
-  @SuppressWarnings("serial")
-  private static class EmptySolutionListException extends JMetalException {
-    public EmptySolutionListException() {
-      super("The solution list is empty");
-    }
-  }
->>>>>>> upstream/master
 }

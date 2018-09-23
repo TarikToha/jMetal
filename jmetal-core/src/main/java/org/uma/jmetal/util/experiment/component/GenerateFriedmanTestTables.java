@@ -82,8 +82,8 @@ public class GenerateFriedmanTestTables<Result> implements ExperimentComponent {
   private void readDataFromFile(String path, Vector<Vector<Double>> data, int algorithmIndex) {
     String string = "";
 
-    try(FileInputStream fis = new FileInputStream(path)) {
-      
+    try {
+      FileInputStream fis = new FileInputStream(path);
 
       byte[] bytes = new byte[4096];
       int readBytes = 0;
@@ -96,6 +96,7 @@ public class GenerateFriedmanTestTables<Result> implements ExperimentComponent {
         }
       }
 
+      fis.close();
     } catch (IOException e) {
       throw new JMetalException("Error reading data ", e) ;
     }
@@ -225,15 +226,21 @@ public class GenerateFriedmanTestTables<Result> implements ExperimentComponent {
   private void writeLatexFile(GenericIndicator<?> indicator, String fileContents) {
     String outputFile = latexDirectoryName +"/FriedmanTest"+indicator.getName()+".tex";
 
-    File latexOutput;
-    latexOutput = new File(latexDirectoryName);
-    if(!latexOutput.exists()){
-      latexOutput.mkdirs();
-    }
-    
-    try(DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(outputFile))) {
+    try {
+      File latexOutput;
+      latexOutput = new File(latexDirectoryName);
+      if(!latexOutput.exists()){
+        latexOutput.mkdirs();
+      }
+      FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+      DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
+
       dataOutputStream.writeBytes(fileContents);
-    } catch (IOException e) {
+
+      dataOutputStream.close();
+      fileOutputStream.close();
+    }
+    catch (IOException e) {
       throw new JMetalException("Error writing data ", e) ;
     }
   }
