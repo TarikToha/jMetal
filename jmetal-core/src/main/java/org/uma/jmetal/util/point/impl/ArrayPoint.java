@@ -76,9 +76,9 @@ public class ArrayPoint implements Point {
    * @param fileName
    */
   public ArrayPoint(String fileName) throws IOException {
-    FileInputStream fis = new FileInputStream(fileName);
-    InputStreamReader isr = new InputStreamReader(fis);
-    BufferedReader br = new BufferedReader(isr);
+   FileInputStream fis = new FileInputStream(fileName);
+   InputStreamReader isr = new InputStreamReader(fis);
+   try(BufferedReader br = new BufferedReader(isr)){
 
     List<Double> auxiliarPoint = new ArrayList<Double>();
     String aux = br.readLine();
@@ -97,7 +97,7 @@ public class ArrayPoint implements Point {
       point[i] = auxiliarPoint.get(i) ;
     }
 
-    br.close();
+   }
   }
 
   @Override

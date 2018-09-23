@@ -27,7 +27,13 @@ public class SequentialSolutionListEvaluator<S> implements SolutionListEvaluator
         return solutionList;
     }
 
+<<<<<<< HEAD
     @Override
     public void shutdown() {
     }
+=======
+  @Override public void shutdown() {
+	  // This method is an intentionally-blank override.
+  }
+>>>>>>> upstream/master
 }
