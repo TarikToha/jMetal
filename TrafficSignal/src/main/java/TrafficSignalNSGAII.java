@@ -1,13 +1,16 @@
-import org.uma.jmetal.problem.impl.AbstractIntegerProblem;
-import org.uma.jmetal.solution.IntegerSolution;
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.DoubleSolution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrafficSignalNSGAII extends AbstractIntegerProblem {
-    private final double trafficJam[] = {3, 6, 1, 7};
-    private final double speed = 10;
+public class TrafficSignalNSGAII extends AbstractDoubleProblem {
+    private final double trafficJam[] = {30, 60, 10, 70};
+    /**
+     * speed in terms of exporting unit traffic volume per second.
+     */
+    private final double heteroSpeed[] = {3.4, 3, 1.4, 2.2};
 
     /**
      * Constructor Creates a default instance of the traffic signal optimization
@@ -17,13 +20,13 @@ public class TrafficSignalNSGAII extends AbstractIntegerProblem {
      * @param minJamTime    Minimum time of traffic jam
      * @param maxJamTime    Maximum time of traffic jam
      */
-    public TrafficSignalNSGAII(int numberOfLinks, int minJamTime, int maxJamTime) {
+    public TrafficSignalNSGAII(int numberOfLinks, double minJamTime, double maxJamTime) {
         setNumberOfVariables(numberOfLinks);
         setNumberOfObjectives(2);
         setName("TrafficSignal");
 
-        List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables());
-        List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables());
+        List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
+        List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
 
         for (int i = 0; i < getNumberOfVariables(); i++) {
             lowerLimit.add(minJamTime);
@@ -42,11 +45,11 @@ public class TrafficSignalNSGAII extends AbstractIntegerProblem {
     }
 
     @Override
-    public void evaluate(IntegerSolution solution) {
+    public void evaluate(DoubleSolution solution) {
         double[] objectives = new double[getNumberOfObjectives()];
 
         int numberOfVariables = getNumberOfVariables();
-        int[] candidate = new int[numberOfVariables];
+        double[] candidate = new double[numberOfVariables];
         for (int var = 0; var < numberOfVariables; var++) {
             candidate[var] = solution.getVariableValue(var);
         }
@@ -56,12 +59,12 @@ public class TrafficSignalNSGAII extends AbstractIntegerProblem {
 
         double sumJam = 0.0, sumTime = 0.0;
         for (int var = 0; var < numberOfVariables; var++) {
-            updatedJam[var] = Math.abs(updatedJam[var] - candidate[var] / speed);
+            updatedJam[var] = Math.abs(updatedJam[var] - candidate[var] * heteroSpeed[var]);
             sumJam += updatedJam[var];
 
             for (int i = 0; i < numberOfVariables; i++) {
                 if (i != var) {
-                    sumTime += seriesSum(updatedJam[i]) / (1 + updatedJam[i]) * speed + candidate[var];
+                    sumTime += candidate[var] + seriesSum(updatedJam[i]) / (1 + updatedJam[i]) / heteroSpeed[i];
                 }
             }
         }
@@ -74,7 +77,7 @@ public class TrafficSignalNSGAII extends AbstractIntegerProblem {
 
     private double seriesSum(double max) {
         double sum = 0;
-        max = Math.round(max);
+        max = Math.round(max) - 1;
         for (int i = 1; i <= max; i++) {
             sum += i;
         }

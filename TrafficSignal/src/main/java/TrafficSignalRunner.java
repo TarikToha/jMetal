@@ -5,22 +5,20 @@ import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.HUXCrossover;
-import org.uma.jmetal.operator.impl.crossover.IntegerSBXCrossover;
 import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.BitFlipMutation;
-import org.uma.jmetal.operator.impl.mutation.IntegerPolynomialMutation;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.BinaryProblem;
 import org.uma.jmetal.problem.DoubleProblem;
-import org.uma.jmetal.problem.IntegerProblem;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.DoubleSolution;
-import org.uma.jmetal.solution.IntegerSolution;
 import org.uma.jmetal.util.AbstractAlgorithmRunner;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+import org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,22 +40,24 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
 
     public static void main(String[] args) {
 //        new TrafficSignalRunner().optimizerGA();
-        new TrafficSignalRunner().optimizerNSGAII();
-//        new TrafficSignalRunner().optimizerNSGAIIBinary();
+//        new TrafficSignalRunner().optimizerNSGAII();
+        new TrafficSignalRunner().optimizerNSGAIIBinary();
     }
 
     private void optimizerNSGAIIBinary() {
 
-        BinaryProblem problem = new TrafficSignalNSGAIIBinary(10, 25, 130);
+        BinaryProblem problem = new TrafficSignalNSGAIIBinary(10, 10, 180);
 
-        CrossoverOperator<BinarySolution> crossover = new HUXCrossover(0.9);
+        CrossoverOperator<BinarySolution> crossover = new HUXCrossover(1.0 / problem.getNumberOfBits(0));
         MutationOperator<BinarySolution> mutation = new BitFlipMutation(1.0 / problem.getNumberOfBits(0));
         SelectionOperator<List<BinarySolution>, BinarySolution> selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
+        SolutionListEvaluator<BinarySolution> evaluator = new MultithreadedSolutionListEvaluator<>(4, problem);
 
         Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation)
                 .setPopulationSize(100)
-                .setMaxEvaluations(1000)
+                .setMaxEvaluations(10000)
                 .setSelectionOperator(selection)
+                .setSolutionListEvaluator(evaluator)
                 .build();
 
         algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
@@ -70,16 +70,16 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
     }
 
     private void optimizerNSGAII() {
-        IntegerProblem problem = new TrafficSignalNSGAII(4, 0, 180);
+        DoubleProblem problem = new TrafficSignalNSGAII(4, 10, 180);
 
-        CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(1.0 / problem.getNumberOfVariables(), 20.0);
-        MutationOperator<IntegerSolution> mutation = new IntegerPolynomialMutation(1.0 / problem.getNumberOfVariables(), 20);
-        SelectionOperator<List<IntegerSolution>, IntegerSolution> selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
-//        SolutionListEvaluator<DoubleSolution> evaluator = new MultithreadedSolutionListEvaluator<>(4, problem);
+        CrossoverOperator<DoubleSolution> crossover = new SBXCrossover(1.0 / problem.getNumberOfVariables(), 20.0);
+        MutationOperator<DoubleSolution> mutation = new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0);
+        SelectionOperator<List<DoubleSolution>, DoubleSolution> selection = new BinaryTournamentSelection<>(new RankingAndCrowdingDistanceComparator<>());
+        SolutionListEvaluator<DoubleSolution> evaluator = new MultithreadedSolutionListEvaluator<>(4, problem);
 
-        Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation)
+        Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation)
                 .setSelectionOperator(selection)
-//                .setSolutionListEvaluator(evaluator)
+                .setSolutionListEvaluator(evaluator)
                 .setPopulationSize(100)
                 .setMaxEvaluations(10000)
                 .build();
@@ -89,7 +89,7 @@ public class TrafficSignalRunner extends AbstractAlgorithmRunner {
         computingTime = algorithmRunner.getComputingTime();
         JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 
-        List<IntegerSolution> population = algorithm.getResult();
+        List<DoubleSolution> population = algorithm.getResult();
         printFinalSolutionSet(population);
     }
 
